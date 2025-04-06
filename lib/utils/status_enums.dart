@@ -3,6 +3,7 @@ enum StatusMessageType {
   integrateGooglePackage,
   integrateEnvPackage,
   integrateRiverpodPackage,
+  integrateEndAsset,
   saveApiKey,
   validateApiKey,
   configureAndroid,

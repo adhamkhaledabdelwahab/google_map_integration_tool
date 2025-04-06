@@ -72,6 +72,7 @@ class _IntegrationToolScreenState extends State<IntegrationToolScreen> {
 
     bool packageAdded = false;
     final pubspecPath = '$_selectedProjectPath/pubspec.yaml';
+    final pubspec = File(pubspecPath);
     final pubspecContent = File(pubspecPath).readAsStringSync();
 
     if (!pubspecContent.contains('google_maps_flutter')) {
@@ -141,6 +142,40 @@ class _IntegrationToolScreenState extends State<IntegrationToolScreen> {
           StatusMessageType.integrateRiverpodPackage,
           StatusMessage.error,
           '❌ Error: flutter_riverpod already exists in pubspec.yaml',
+        ),
+      );
+    }
+
+    if (!pubspecContent.contains('- .env')) {
+      packageAdded = true;
+      var content = "";
+
+      // Add assets section if missing
+      if (!content.contains('assets:')) {
+        content = pubspecContent.replaceFirst(
+          'flutter:',
+          'flutter:\n  assets:\n    - .env',
+        );
+      } else {
+        // Add .env to existing assets
+        content = pubspecContent.replaceFirst('assets:', 'assets:\n    - .env');
+      }
+
+      pubspec.writeAsStringSync(content);
+
+      _statusMessages.addStatusMessage(
+        AppStatus(
+          StatusMessageType.integrateEndAsset,
+          StatusMessage.success,
+          '✅ Added .env to assets in pubspec.yaml',
+        ),
+      );
+    } else {
+      _statusMessages.addStatusMessage(
+        AppStatus(
+          StatusMessageType.integrateEndAsset,
+          StatusMessage.error,
+          '❌ Error: .env already exists in assets section of pubspec.yaml',
         ),
       );
     }
